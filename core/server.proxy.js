@@ -1,4 +1,4 @@
-var server = $.nodejs.httpProxy.createServer(function(req, res, proxy){
+function logic(req, res, proxy){
     var buffer = $.nodejs.httpProxy.buffer(req),
         url = $.nodejs.url.parse(req.url);
 
@@ -17,11 +17,31 @@ var server = $.nodejs.httpProxy.createServer(function(req, res, proxy){
         return;
     };
 
-    res.write(JSON.stringify(req.headers));
-    res.end('The proxy is up and running. Currently it have no ability to proxy your request further.');
-});
+    // do a series of logic.
+    var task = [
+        function(callback){
+            if(url.href.indexOf('.png') >= 0) callback(true);
+            callback(null);
+        },
+    ];
+
+    $.nodejs.async.series(task, function(err, taskResult){
+        if(null == err){
+            proxy.proxyRequest(req, res, {
+                host: url.hostname,
+                port: url.port || 80,
+                buffer: buffer,
+            });
+            return;
+        };
+
+        res.end('Proxy refused to serve this request.');
+    });
+};
+
+//////////////////////////////////////////////////////////////////////////////
+var server = $.nodejs.httpProxy.createServer(logic);
 
 // start server
 server.listen($.config['service-port']);
-
 module.exports = server;
