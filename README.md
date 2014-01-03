@@ -1,6 +1,7 @@
 Over the Peak
 =============
+This intends to implementing another Socksv5 proxy, with planning features like:
+* content filtering, basing on multiple rules.
+* encrypted forwarding, including hidding the traffic under protocols like HTTP, HTTPS or even XMPP.
 
-A useful but may not so user-friendly http proxy providing:
-    * content filtering, basing on multiple rules.
-    * proxy chaining(with this the same proxy).
+A friendly webUI should be implemented.
