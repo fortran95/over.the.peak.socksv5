@@ -1,3 +1,6 @@
-var server = $.socksv5($.config['service-port']);
+var server = $.socksv5(
+    $.config['service-port'],
+    $.proxys.dummy
+);
 
 module.exports = server;
