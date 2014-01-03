@@ -1,6 +1,7 @@
 require('./lib/baum.js');
-$.config = JSON.parse($.nodejs.fs.readFileSync('./config'));
 
+$.config = JSON.parse($.nodejs.fs.readFileSync('./config'));
+$.socksv5 = require('./lib/socksv5.js')($);
 //////////////////////////////////////////////////////////////////////////////
 
 // set up proxy
