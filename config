@@ -1,0 +1,6 @@
+{
+    "service-port": 8119,
+    "manage-port": 8192,
+
+    "web-access-control-panel": true
+}
