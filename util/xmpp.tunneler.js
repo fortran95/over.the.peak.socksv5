@@ -5,15 +5,20 @@ var sockets = {};
 
 function socket(from, id, xmpp){
     var self = this;
-    var state = 0, socket = new $.nodejs.net.Socket();
+    var state = 0;
+    
+    var socket = new $.nodejs.net.Socket();
 
     function send(data){
+        if(state < 0) return;
+        console.log('DATA SEND to [', from, ']: \n', JSON.stringify(data), '\n-----------');
         data.id = id;
         xmpp.send(from, JSON.stringify(data));
     };
 
     socket.on('error', function(e){
         send({
+            res: 'error',
             err: e.message,
         });
         socket.destroy();
@@ -21,17 +26,23 @@ function socket(from, id, xmpp){
     });
 
     socket.on('data', function(data){
-        send({
-            res: 'data',
-            data: data.toString('base64'),
-        });
+        var buf;
+        while(data.length > 0){
+            buf = data.slice(0, 1024);
+            data = data.slice(1024);
+            send({
+                res: 'data',
+                data: buf.toString('hex'),
+            });
+        };
     });
 
     socket.on('end', function(data){
-        if(undefined == data) return;
+        var dataB64 = '';
+        if(undefined != data) dataB64 = data.toString('hex');
         send({
             res: 'end',
-            data: data.toString('base64'),
+            data: dataB64,
         });
     });
 
@@ -47,14 +58,14 @@ function socket(from, id, xmpp){
             case 0:
                 if('connect' != json.cmd || 0 != state)
                     return send({
-                        err: 1
+                        res: 'error',
                     });
 
                 var port = parseInt(json.port), addr = json.addr;
 
                 socket.connect(port, addr, function(){
                     send({
-                        res: 'connect',
+                        res: 'connection',
                     });
 
                     state = 1;
@@ -64,18 +75,22 @@ function socket(from, id, xmpp){
                 var data;
 
                 if('end' == json.cmd){
-                    data = new $.nodejs.buffer.Buffer(json.data, 'base64');
+                    data = new $.nodejs.buffer.Buffer(json.data, 'hex');
                     socket.end(data);                    
                 };
 
                 if('data' == json.cmd){
-                    data = new $.nodejs.buffer.Buffer(json.data, 'base64');
+                    data = new $.nodejs.buffer.Buffer(json.data, 'hex');
                     socket.write(data);
                 };
 
             default:
                 break;
         };
+    };
+
+    this.state = function(){
+        return state;
     };
 
     return this;
@@ -110,6 +125,7 @@ var jid = process.argv[2],
 xmpp = $.xmpp(jid, password);
 
 xmpp.on('data', function(data){
+    console.log('DATA Received: --\n', data.content, '\n-----------------');
     try{
         var json = JSON.parse(data.content);
         handle(data.from, json);
