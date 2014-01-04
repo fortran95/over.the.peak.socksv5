@@ -1,6 +1,6 @@
 var server = $.socksv5(
     $.config['service-port'],
-    $.proxys.dummy,
+    $.proxys.dummy, // $.proxys.xmpp('username', '******')
     $.analyzer
 );
 
