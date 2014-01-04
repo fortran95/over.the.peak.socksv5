@@ -32,14 +32,14 @@ function socket(from, id, xmpp){
             data = data.slice(1024);
             send({
                 res: 'data',
-                data: buf.toString('hex'),
+                data: buf.toString('base64'),
             });
         };
     });
 
     socket.on('end', function(data){
         var dataB64 = '';
-        if(undefined != data) dataB64 = data.toString('hex');
+        if(undefined != data) dataB64 = data.toString('base64');
         send({
             res: 'end',
             data: dataB64,
@@ -75,12 +75,12 @@ function socket(from, id, xmpp){
                 var data;
 
                 if('end' == json.cmd){
-                    data = new $.nodejs.buffer.Buffer(json.data, 'hex');
+                    data = new $.nodejs.buffer.Buffer(json.data, 'base64');
                     socket.end(data);                    
                 };
 
                 if('data' == json.cmd){
-                    data = new $.nodejs.buffer.Buffer(json.data, 'hex');
+                    data = new $.nodejs.buffer.Buffer(json.data, 'base64');
                     socket.write(data);
                 };
 
