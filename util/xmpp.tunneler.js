@@ -1,7 +1,21 @@
 /*
  * Server side of a XMPP tunnel
  */
+var sockets = {};
 
+function handle(from, json){
+    var jid = new $.nodejs.xmpp.JID(from).bare().toString();
+    var id = parseInt(json.id);
+    if(isNaN(id)) return;
+
+    if(undefined == sockets[jid]) sockets[jid] = {};
+    if(undefined == sockets[jid][id]) 
+        sockets[jid][id] = new $.nodejs.net.Socket();
+
+
+};
+
+//////////////////////////////////////////////////////////////////////////////
 require('../lib/baum.js');
 
 if(process.argv.length < 4){
@@ -15,7 +29,11 @@ var jid = process.argv[2],
 var xmpp = $.xmpp(jid, password);
 
 xmpp.on('data', function(data){
-    console.log(data);
+    try{
+        var json = JSON.parse(data);
+        handle(data.from, json);
+    } catch(e){
+    };
 });
 
 xmpp.login(true);
