@@ -5,12 +5,29 @@ $.streaming = require('./lib/streaming.js');
 //////////////////////////////////////////////////////////////////////////////
 
 // set up proxy
-var mechanism = require('./lib/mechanism/__init__.js')(),
-    proxy = require('./lib/proxy/__init__.js')();
+var mechanism = {
+        server: {
+            XMPP: require('./lib/mechanism/server/xmpp.js')(),
+        },
+        client: {
+            dummy: require('./lib/mechanism/client/dummy.js')(),
+            XMPP: require('./lib/mechanism/client/xmpp.js')(),
+        },
+    },
+    proxy = {
+        server: {
+            dummy: require('./lib/proxy/server/dummy.js')(),
+            SocksV5: require('./lib/proxy/server/socksv5.js')(),
+        },
+        client: {
+            SocksV5: require('./lib/proxy/client/socksv5.js')(),
+        }
+    }
+;
 
 if($.config.client){
-    var proxyClient = proxy.client[$.config.client.proxy.select](),
-        mechanismClient = mechanism.client[$.config.client.mechanism.select]()
+    var proxyClient = new proxy.client[$.config.client.proxy.select](),
+        mechanismClient = new mechanism.client[$.config.client.mechanism.select]()
     ;
 
     for(var key in $.config.client.proxy.config)
@@ -25,8 +42,8 @@ if($.config.client){
 };
 
 if($.config.server){
-    var proxyServer = proxy.server[$.config.server.proxy.select](),
-        mechanismServer = mechanism.server[$.config.server.mechanism.select]()
+    var proxyServer = new proxy.server[$.config.server.proxy.select](),
+        mechanismServer = new mechanism.server[$.config.server.mechanism.select]()
     ;
 
     for(var key in $.config.server.proxy.config)
@@ -34,8 +51,8 @@ if($.config.server){
     for(var key in $.config.server.mechanism.config)
         mechanismServer.configure(key, $.config.server.mechanism.config[key]);
 
-    mechanismServer.start();
-
-    proxyServer.setMechanism(mechanismServer);
     proxyServer.start();
+
+    mechanismServer.setProxy(proxyServer);
+    mechanismServer.start();
 };
