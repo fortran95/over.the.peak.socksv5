@@ -25,4 +25,17 @@ if($.config.client){
 };
 
 if($.config.server){
+    var proxyServer = proxy.server[$.config.server.proxy.select](),
+        mechanismServer = mechanism.server[$.config.server.mechanism.select]()
+    ;
+
+    for(var key in $.config.server.proxy.config)
+        proxyServer.configure(key, $.config.server.proxy.config[key]);
+    for(var key in $.config.server.mechanism.config)
+        mechanismServer.configure(key, $.config.server.mechanism.config[key]);
+
+    mechanismServer.start();
+
+    proxyServer.setMechanism(mechanismServer);
+    proxyServer.start();
 };
