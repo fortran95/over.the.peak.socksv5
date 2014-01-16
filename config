@@ -1,6 +1,34 @@
 {
+    "proxy": {
+        "client": {
+            "select": "SocksV5",
+            "config": {
+            }
+        },
+        "server": {
+        }
+    },
+    "mechanism": {
+        "client": {
+        },
+        "server": {
+        }
+    },
+
     "service-port": 8119,
     "manage-port": 8192,
 
-    "web-access-control-panel": true
+    "web-access-control-panel": true,
+
+    "block": {
+        "(post|tieba|news|wap|wapp|images|image|mp3|zhidao|hi)\\.baidu.*\\.com": false,
+        "\\.?(hao123|9223|google-analytics|csbew|yigao|mediav|admaimai|youmi|lsrwl|iaiwan|adcpx|kefeng56|vsnoon)\\.(com|net|org|cn)": true,
+        "\\.?google.+\\.com": true,
+        "(cpro|cb|hm|wangmeng|pos)\\.baidu.*\\.com": true,
+        "ad.*\\..+\\.(com|net|org)": true,
+        "\\.?(youdao|doubleclick|crwdcntrl|321tq|engageya|exponential|cnzz|345lm|mitaoai|kangca|ku112|9wad|a3p4|tssfgt|tanx|778669)\\.(com|net|org|cn)": true,
+        "click\\.taobao\\.com": true,
+        "\\..+\\..+\\.taobao\\.com": true,
+        "\\.?[0-9]{6,}\\.(com|net|org|cn)": true
+    }
 }
