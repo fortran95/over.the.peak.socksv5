@@ -14,15 +14,15 @@ A friendly webUI should be implemented.
 The system of proxy is designed to be combinable and chainable. We use
 following model to describe this system.
 
-                       +------------------------------------+
-                  +--> | Traffic Monitoring and Controlling |
-                  |    +------------------------------------+
-                 \|/
-+----------+  +--------+-----------+            +-----------+--------+
-| Requests |  | Proxy  : Mechanism |  Internet  | Mechanism : Proxy  |
-|  from    |->|        :           | =========> |           :        | -> O
-| Browsers |  | Client : Client    |            | Server    : Server |
-+----------+  +--------+-----------+            +-----------+--------+
+                           +------------------------------------+
+                      +--> | Traffic Monitoring and Controlling |
+                      |    +------------------------------------+
+                     \|/
+    +----------+  +--------+-----------+            +-----------+--------+
+    | Requests |  | Proxy  : Mechanism |  Internet  | Mechanism : Proxy  |
+    |  from    |->|        :           | =========> |           :        | -> O
+    | Browsers |  | Client : Client    |            | Server    : Server |
+    +----------+  +--------+-----------+            +-----------+--------+
 
 There are 2 types of objects here, a proxy and a mechanism. Each of them can
 furthur be classified as two parts: a client and a server. And we use 4 such
